@@ -1,5 +1,7 @@
 # Radar
 
+🇵🇹 Português · [🇬🇧 English](README.en.md)
+
 Assistente de procura de emprego para **qualquer profissão**, da auxiliar de limpeza ao diretor financeiro.
 A pessoa cria o perfil uma vez (com CV ou com um formulário simples, sem CV); o Radar junta ofertas de vários
 sites de emprego, a IA dá a cada uma uma nota (0–100) face ao perfil e às preferências, e envia as melhores por
