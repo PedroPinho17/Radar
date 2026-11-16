@@ -1,0 +1,12 @@
+**/node_modules
+**/dist
+**/.next
+**/.turbo
+**/.env
+.git
+# builds e relatórios de testes (não entram nas imagens)
+**/.next-e2e
+**/coverage
+**/test-results
+**/playwright-report
+**/*.tsbuildinfo

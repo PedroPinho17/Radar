@@ -1,0 +1,111 @@
+﻿# 1) LIGAR O DOCKER
+Abrir o Docker Desktop e esperar que diga que esta a correr.
+
+# 2) PROGRAMAR (dia a dia)
+Na pasta radar-app:
+  docker compose up -d        (liga so o Postgres)
+  pnpm dev                    (API na 3001 + site na 3000)
+Abrir http://localhost:3000
+
+So a API:  pnpm --filter api dev
+
+Nota (PC Windows): o antivirus interceta o TLS do Gmail.
+Por isso o dev da API usa "node --use-system-ca". No Docker/VPS nao e preciso.
+
+# 3) TESTAR COMO VAI FICAR ONLINE (tudo no Docker)
+Parar o pnpm dev primeiro (usa a porta 3000).
+  docker compose --profile app up -d --build
+Abrir http://localhost:3000
+
+Ver logs:   docker compose --profile app logs -f api
+            docker compose --profile app logs -f web
+Parar app:  docker compose --profile app stop
+            (o Postgres continua ligado)
+
+# 4) LIMPEZA (de vez em quando)
+  docker image prune          (apaga imagens antigas que ja nao se usam)
+
+# 5) BASE DE DADOS (migracoes)
+O esquema da BD so muda por migracoes (pasta apps/api/src/migrations).
+A API aplica sozinha as migracoes pendentes ao arrancar.
+
+Mudaste uma entidade (*.entity.ts)? Gera a migracao e faz commit dela:
+  pnpm --filter api db:generate src/migrations/NomeDaMudanca
+Outros comandos:
+  pnpm --filter api db:show       (lista aplicadas / por aplicar)
+  pnpm --filter api db:migrate    (aplica as pendentes)
+  pnpm --filter api db:revert     (desfaz a ultima)
+
+!! BASE DE DADOS QUE JA EXISTIA ANTES DAS MIGRACOES (ex.: a da VPS) !!
+Correr UMA vez, ANTES de pores a versao nova a correr:
+  1. Backup (ver secao 9: o ficheiro fica em base-de-dados\radar.dump)
+  2. Ver o que vai mudar (nao altera nada):
+       docker compose --profile app run --rm api node dist/scripts/db-baseline.js --dry-run
+  3. Aplicar:
+       docker compose --profile app run --rm api node dist/scripts/db-baseline.js
+  (Recusa se fosse apagar dados. As contas que ja existiam ficam com o email confirmado.)
+Sem isto, a API nao arranca ("relation users already exists").
+A BD local deste PC ja foi adotada (16/11/2026), incluindo a migracao Feedback.
+
+# 6) MONITORIZACAO
+- ALERT_EMAIL (apps/api/.env): recebe um email quando uma fonte falha 2x seguidas, a IA nao avalia nada
+  ou os resumos falham (no maximo 1 alerta por tipo a cada 6h). Recebe tambem o que os
+  utilizadores enviam em "Reportar um problema" (com Reply-To da pessoa, para responderes direto).
+- ADMIN_EMAILS (apps/api/.env, separados por virgulas): estes utilizadores veem a pagina /estado no site
+  (estado de cada peca + lista do que foi reportado, com "Marcar como resolvido").
+- https://O-TEU-DOMINIO/api/health  -> publico, para um monitor externo gratis (UptimeRobot, Better Stack):
+  200 = a funcionar, 503 = em baixo. Assim sabes quando a VPS inteira cai (o ALERT_EMAIL nao consegue avisar disso).
+
+# 7) TESTES (na pasta radar-app)
+  pnpm test           testes unitarios da API e do site (rapidos, sem base de dados)
+  pnpm test:cov       o mesmo com cobertura. FALHA se descer de 80% (linhas/instrucoes/funcoes) ou 70% (ramos)
+  pnpm test:e2e       ponta a ponta no Chrome: registo -> confirmar email -> CV -> preferencias ->
+                      reportar problema -> login -> apagar conta. Precisa do Postgres ligado (docker compose up -d).
+                      Usa base propria (radar_e2e, recriada a cada vez), portas 3200/3201 e build .next-e2e:
+                      nao mexe nos teus dados nem no pnpm dev. Nenhum email e enviado.
+  pnpm lint           ESLint (analisa tambem o codigo .ts/.tsx do site)
+
+# 8) VARIAS INSTANCIAS DA API
+Podem correr varias ao mesmo tempo (ex.: pnpm dev + Docker, ou 2 replicas na VPS): as tarefas
+agendadas (sync, avaliacao pela IA, resumos por email, limpeza) usam um lock no Postgres e so
+uma instancia corre cada uma. Ninguem recebe o mesmo email duas vezes.
+A IA avalia ofertas em segundo plano aos :15 e :45 (15 por pessoa de cada vez); o email das 8h30
+fica rapido.
+
+# 9) BASE DE DADOS: BACKUP, LEVAR PARA OUTRO PC E RESTAURAR
+O ficheiro da copia fica em base-de-dados\radar.dump (pasta ignorada pelo git: tem dados
+pessoais - emails, hashes de password, perfis -, NUNCA vai para o GitHub).
+Os comandos funcionam no PowerShell e no Git Bash (nao usam ">" nem "<", que no PowerShell
+estragam ficheiros binarios). Na pasta radar-app, com o Postgres ligado (docker compose up -d):
+
+FAZER UMA COPIA (backup):
+  docker compose exec postgres pg_dump -U radar -d radar -Fc -f /tmp/radar.dump
+  docker compose cp postgres:/tmp/radar.dump base-de-dados/radar.dump
+  (cria a pasta base-de-dados antes, se nao existir:  mkdir base-de-dados)
+
+RESTAURAR NOUTRO PC (ou voltar atras):
+  ATENCAO: substitui TUDO o que estiver na base de dados desse PC pelo conteudo da copia.
+  1. Parar a API para nao mexer na BD durante o restauro:
+       docker compose --profile app stop api      (e/ou parar o pnpm dev)
+  2. Restaurar:
+       docker compose cp base-de-dados/radar.dump postgres:/tmp/radar.dump
+       docker compose exec postgres pg_restore -U radar -d radar --clean --if-exists --no-owner /tmp/radar.dump
+  3. Confirmar (deve aparecer o teu email):
+       docker compose exec postgres psql -U radar -d radar -c "select email from users"
+  4. Voltar a ligar a API (pnpm dev ou docker compose --profile app up -d).
+  A copia ja traz as migracoes aplicadas: NAO e preciso o baseline da secao 5.
+  As sessoes vem na copia: o login do outro PC pode continuar valido, ou entras de novo.
+
+# Notas
+- As chaves (Gemini, Groq, SMTP...) vem de apps/api/.env. Nunca vai para o git nem para as imagens.
+- No Docker a API liga-se ao Postgres por "postgres:5432"; no pnpm dev por 127.0.0.1:5434.
+- JOOBLE_API_KEY (opcional, em apps/api/.env): ofertas de todas as areas. Chave gratis em jooble.org/api/about
+- Email de contacto da pagina /privacidade: no Docker, CONTACT_EMAIL=o-teu-email num ficheiro .env na
+  pasta radar-app (ao lado do docker-compose.yml); fora do Docker, NEXT_PUBLIC_CONTACT_EMAIL no build do site.
+- So os ADMIN_EMAILS podem forcar o sync de ofertas a mao (POST /api/jobs/sync); de resto corre sozinho.
+- AI_DELAY_MS (opcional, omissao 4000): pausa entre avaliacoes da IA, para nao estourar quotas.
+- SALARIO ESTIMADO (opcional): arrancar o projeto salary-predictor (API Python, outro repositorio) noutro
+  terminal, na porta 8000. pnpm dev: SALARY_API_URL=http://127.0.0.1:8000 em apps/api/.env.
+  Docker: ja configurado (host.docker.internal:8000). Desligado = o Radar funciona igual, sem estimativas.
+- Variaveis novas que o site use no build/dev tem de ser declaradas no turbo.json ("env"):
+  o Turborepo esconde as que nao estao la (hoje: API_URL, NODE_ENV, NEXT_DIST_DIR; NEXT_PUBLIC_* passam sempre).

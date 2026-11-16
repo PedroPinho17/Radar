@@ -1,0 +1,6 @@
+# Só as páginas públicas aparecem nos motores de busca; o resto é privado (pede login).
+User-agent: *
+Allow: /bem-vindo
+Allow: /termos
+Allow: /privacidade
+Disallow: /

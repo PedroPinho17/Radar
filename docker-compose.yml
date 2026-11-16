@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: radar
+      POSTGRES_PASSWORD: radar
+      POSTGRES_DB: radar
+    ports:
+      - "127.0.0.1:5434:5432"
+    volumes:
+      - radar_pg:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    env_file: apps/api/.env
+    environment:
+      DATABASE_URL: postgres://radar:radar@postgres:5432/radar
+      HOST: 0.0.0.0
+      PORT: 3001
+      NODE_ENV: production
+      WEB_URL: http://localhost:3000
+      TRUST_PROXY: uniquelocal
+      SALARY_API_URL: http://host.docker.internal:8000
+    # no Docker Desktop (Windows/Mac) host.docker.internal já existe; em Linux (VPS) é preciso isto
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - postgres
+    profiles: ["app"]
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        API_URL: http://api:3001
+        # email mostrado em /privacidade; define CONTACT_EMAIL num .env ao lado deste ficheiro
+        NEXT_PUBLIC_CONTACT_EMAIL: ${CONTACT_EMAIL:-}
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - api
+    profiles: ["app"]
+
+volumes:
+  radar_pg:
