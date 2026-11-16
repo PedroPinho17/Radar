@@ -1,28 +1,24 @@
 # Radar
 
-🇵🇹 Português · [🇬🇧 English](README.en.md)
+<p align="right"><b>Português</b> · <a href="README.en.md">English</a></p>
 
 Assistente de procura de emprego para **qualquer profissão**, da auxiliar de limpeza ao diretor financeiro.
 A pessoa cria o perfil uma vez (com CV ou com um formulário simples, sem CV); o Radar junta ofertas de vários
 sites de emprego, a IA dá a cada uma uma nota (0–100) face ao perfil e às preferências, e envia as melhores por
 email nos dias e horas que a pessoa escolher.
 
-> Como pôr a correr, testar e fazer deploy: **[COMO-CORRER.TXT](COMO-CORRER.TXT)**.
+<p align="center">
+  <img src="docs/media/demo.gif" alt="Demo: entrar, ver ofertas com nota da IA, filtrar por fonte, marcar candidaturas e configurar o perfil" width="900">
+</p>
+<p align="center"><sub>Demo a 2× · <a href="docs/media/demo.mp4">vídeo em qualidade total</a> · conta de demonstração fictícia</sub></p>
 
-## Começar
-
-Requisitos: Node.js 24+, pnpm 11 e Docker Desktop.
-
-```bash
-git clone https://github.com/PedroPinho17/radar.git
-cd radar
-pnpm install
-cp apps/api/.env.example apps/api/.env   # preencher as chaves (Gemini, Groq, SMTP…)
-docker compose up -d                     # liga o Postgres (porta 5434)
-pnpm dev                                 # API em :3001 + site em :3000
-```
-
-Abrir <http://localhost:3000>. Para correr tudo em Docker: `docker compose --profile app up -d --build`.
+![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
+![NestJS](https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
+![TypeORM](https://img.shields.io/badge/TypeORM-migrações-FE0803)
+![Gemini](https://img.shields.io/badge/IA-Gemini%20%2B%20Groq-8E75B2?logo=googlegemini&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
 ## Funcionalidades
 
@@ -42,6 +38,64 @@ Abrir <http://localhost:3000>. Para correr tudo em Docker: `docker compose --pro
 - **Conta**: confirmação de email, recuperar/mudar password, terminar outras sessões.
 - **RGPD**: consentimento, exportar dados (JSON), apagar conta, limpeza automática, páginas de Termos e Privacidade.
 - **Operação**: `/api/health`, alertas por email, página `/estado` para admins, "Reportar um problema".
+- **Tema claro e escuro** e site adaptado a telemóvel.
+
+## Capturas de ecrã
+
+| Página de apresentação | Ofertas ordenadas pela nota da IA |
+| --- | --- |
+| ![Página de apresentação do Radar](docs/media/welcome.png) | ![Lista de ofertas com nota, razões e requisitos em falta](docs/media/offers.png) |
+| **O que a pessoa procura** | **Emails agendados** |
+| ![Perfil: área profissional, funções, turnos e contrato](docs/media/profile.png) | ![Configuração dos emails: dias, horas, nº de ofertas e nota mínima](docs/media/emails.png) |
+| **Acompanhamento de candidaturas** | **Tema escuro** |
+| ![Candidaturas em curso com estado e notas](docs/media/applications.png) | ![Lista de ofertas em tema escuro](docs/media/offers-dark.png) |
+
+<p align="center">
+  <img src="docs/media/mobile.png" alt="Lista de ofertas no telemóvel" width="300">
+  <br><sub>No telemóvel</sub>
+</p>
+
+## Arquitetura
+
+```mermaid
+flowchart LR
+    U[Browser<br/>Next.js] -- /api/* --> A[API<br/>NestJS]
+    A --> P[(PostgreSQL)]
+    S1[Net-Empregos<br/>ITJobs · Jooble<br/>Landing.jobs · WWR] -- sync diário 08:00 --> A
+    A -- perfil + oferta --> G[Gemini / Groq]
+    G -- nota 0–100 + razões --> A
+    A -- estimativa salarial --> SP[salary-predictor<br/>opcional]
+    A -- resumo por email<br/>dias e horas de cada pessoa --> E[SMTP]
+```
+
+**Recolha:** `sync diário → ofertas por área e distrito de cada pessoa → normalização (local, modelo de trabalho, salário) → PostgreSQL`
+
+**Avaliação:** `aos :15 e :45 → filtros (funções, local, experiência, palavras a evitar) → IA dá nota + razões + requisitos em falta → matches`
+
+**Emails:** `de 30 em 30 min → quem tem email agendado para esta hora → ofertas novas acima da nota mínima → email`
+
+### Decisões de design
+
+| Decisão | Porquê |
+| --- | --- |
+| Filtros determinísticos antes da IA | A IA é a parte cara e lenta. Localização, experiência e palavras a evitar eliminam a maioria das ofertas sem gastar quota. |
+| Concelhos ↔ distritos (308) | Os sites escrevem a localização de formas diferentes. Um mapa explícito evita falsos positivos como "Porto" ↔ "Porto de Mós". |
+| Gemini com fallback para Groq | Se uma quota acaba ou um modelo falha, a avaliação continua noutro fornecedor. |
+| Avaliação alternada entre fontes | Uma fonte com muitas ofertas não "abafa" as outras na fila da IA. |
+| Locks no Postgres para tarefas agendadas | Várias instâncias da API podem correr ao mesmo tempo sem duplicar avaliações nem emails. |
+| Migrações em vez de `synchronize` | O esquema só muda por migrações versionadas, aplicadas automaticamente ao arrancar. |
+| Sessões em cookie httpOnly | O token nunca fica acessível a JavaScript e na BD só fica o hash. |
+
+## Tecnologias
+
+| Camada | Tecnologia |
+| --- | --- |
+| Frontend | Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui |
+| API | NestJS 12, TypeORM, Zod, @nestjs/schedule |
+| IA | Google Gemini (`@google/genai`), Groq (fallback) |
+| Dados | PostgreSQL 16 |
+| Emails | Nodemailer + templates React |
+| Ferramentas | Turborepo, pnpm workspaces, Docker Compose, Vitest, Playwright, ESLint, oxlint |
 
 ## Estrutura
 
@@ -52,7 +106,32 @@ apps/
 packages/
   eslint-config/       configuração partilhada do ESLint
   typescript-config/   tsconfig partilhados
+docs/media/            capturas de ecrã e demo
 ```
+
+## Começar
+
+### Requisitos
+
+- Node.js 24+
+- pnpm 11
+- Docker Desktop
+- Uma [chave da API do Google Gemini](https://aistudio.google.com/apikey) (e opcionalmente Groq)
+
+### Instalação
+
+```bash
+git clone https://github.com/PedroPinho17/radar.git
+cd radar
+pnpm install
+cp apps/api/.env.example apps/api/.env   # preencher as chaves (Gemini, Groq, SMTP…)
+docker compose up -d                     # liga o Postgres (porta 5434)
+pnpm dev                                 # API em :3001 + site em :3000
+```
+
+Abrir <http://localhost:3000>. Para correr tudo em Docker: `docker compose --profile app up -d --build`.
+
+> Mais comandos (Docker, migrações, testes, backups, monitorização): **[COMO-CORRER.TXT](COMO-CORRER.TXT)**.
 
 ## Base de dados
 
@@ -107,8 +186,12 @@ uma pequena API em Python com um modelo treinado com salários de Informática e
 - `pnpm test:e2e` — testes de ponta a ponta no Chrome (registo → perfil → preferências → apagar conta), em base de dados à parte.
 - `pnpm lint` — ESLint (site) e oxlint (API).
 
-## Segurança (resumo)
+## Segurança
 
 Passwords com scrypt; sessões em cookie httpOnly (só o hash na BD); rate limits e bloqueio após falhas de login;
 verificação de `Origin`; cabeçalhos de segurança (CSP, HSTS em produção…); tokens de email no fragmento do URL
 (nunca enviados a servidores) e de uso único; locks no Postgres para tarefas agendadas com várias instâncias.
+
+## Autor
+
+Feito por **Pedro Pinho** · [GitHub](https://github.com/PedroPinho17)
