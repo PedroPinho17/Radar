@@ -1,6 +1,15 @@
-# Radar
+<p align="center">
+  <img src="docs/media/logo.svg" alt="Logótipo do Radar" width="96">
+</p>
 
-<p align="right"><b>Português</b> · <a href="README.en.md">English</a></p>
+<h1 align="center">Radar</h1>
+
+<p align="center">
+  <b>O emprego certo vem ter contigo.</b><br>
+  Ofertas de vários sites, avaliadas pela IA face ao teu perfil, no teu email.
+</p>
+
+<p align="center"><b>Português</b> · <a href="README.en.md">English</a></p>
 
 Assistente de procura de emprego para **qualquer profissão**, da auxiliar de limpeza ao diretor financeiro.
 A pessoa cria o perfil uma vez (com CV ou com um formulário simples, sem CV); o Radar junta ofertas de vários

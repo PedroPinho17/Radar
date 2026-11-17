@@ -1,6 +1,15 @@
-# Radar
+<p align="center">
+  <img src="docs/media/logo.svg" alt="Radar logo" width="96">
+</p>
 
-<p align="right"><a href="README.md">Português</a> · <b>English</b></p>
+<h1 align="center">Radar</h1>
+
+<p align="center">
+  <b>The right job comes to you.</b><br>
+  Offers from many job sites, scored by AI against your profile, delivered to your inbox.
+</p>
+
+<p align="center"><a href="README.md">Português</a> · <b>English</b></p>
 
 A job-search assistant for **any profession**, from cleaning staff to chief financial officer.
 Users set up their profile once (from a CV or a simple form, no CV needed). Radar gathers job offers from several
