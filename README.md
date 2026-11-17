@@ -28,6 +28,7 @@ emailed on the days and at the times the person chooses.
 ![Gemini](https://img.shields.io/badge/AI-Gemini%20%2B%20Groq-8E75B2?logo=googlegemini&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
+![Tests](https://github.com/PedroPinho17/Radar/actions/workflows/tests.yml/badge.svg)
 
 > The app's interface is in Portuguese: it targets the Portuguese job market.
 
