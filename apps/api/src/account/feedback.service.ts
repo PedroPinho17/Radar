@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { z } from 'zod';
+import { render } from 'react-email';
+import { FeedbackEmail } from '../mail/feedback-email.js';
 import type { UserDto } from '../auth/auth.decorators.js';
 import { Match } from '../jobs/match.entity.js';
 import { MailService } from '../mail/mail.service.js';
@@ -19,12 +21,19 @@ const feedbackSchema = z.object({
   matchId: z.uuid().optional(),
 });
 
-const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+/** Nomes legíveis das páginas do site, para o email não dizer só "/". */
+const PAGE_PT: Record<string, string> = {
+  '/': 'Ofertas', '/perfil': 'Perfil', '/candidaturas': 'Candidaturas', '/estado': 'Estado',
+};
+
+/** Só links http(s) vão para o email (o URL da oferta vem de sites externos). */
+const safeHttpUrl = (u?: string | null) => (u && /^https?:\/\//i.test(u) ? u : null);
 
 @Injectable()
 export class FeedbackService {
   private readonly logger = new Logger(FeedbackService.name);
   private readonly notifyTo?: string;
+  private readonly webUrl: string;
 
   constructor(
     @InjectRepository(Feedback) private readonly feedback: Repository<Feedback>,
@@ -33,6 +42,7 @@ export class FeedbackService {
     config: ConfigService,
   ) {
     this.notifyTo = config.get<string>('ALERT_EMAIL') || undefined;
+    this.webUrl = (config.get<string>('WEB_URL') ?? 'http://localhost:3000').replace(/\/+$/, '');
   }
 
   /** Guarda o que a pessoa reportou e avisa quem gere o Radar por email. */
@@ -52,23 +62,28 @@ export class FeedbackService {
     );
 
     if (this.notifyTo) {
-      const lines = [
-        `De: ${user.email}`,
-        `Tipo: ${TYPE_PT[type]}`,
-        ...(page ? [`Página: ${page}`] : []),
-        ...(match ? [`Oferta: ${match.job.title} @ ${match.job.company} (nota ${match.score})`, `Razões da IA: ${match.reasons.join(' | ')}`] : []),
-        '',
+      const typeLabel = TYPE_PT[type]!;
+      const email = FeedbackEmail({
+        type,
+        typeLabel,
         message,
-      ];
-      const html = `<div style="font-family:Arial,sans-serif;font-size:14px;line-height:1.5">${lines
-        .map((l) => (l ? `<p style="margin:0 0 6px">${esc(l)}</p>` : '<hr>'))
-        .join('')}</div>`;
+        from: user.email,
+        page: page ? { label: PAGE_PT[page] ?? page, url: `${this.webUrl}${page}` } : undefined,
+        when: new Date().toLocaleString('pt-PT', { timeZone: 'Europe/Lisbon', dateStyle: 'long', timeStyle: 'short' }),
+        statusUrl: `${this.webUrl}/estado`,
+        offer: match
+          ? {
+              title: match.job.title, company: match.job.company, location: match.job.location, score: match.score,
+              reasons: match.reasons, missing: match.missingSkills ?? [], url: safeHttpUrl(match.job.url),
+            }
+          : undefined,
+      });
+      const subject = match
+        ? `[Radar] ${typeLabel} · ${match.job.title} (${match.score})`
+        : `[Radar] ${typeLabel}: ${message.length > 60 ? `${message.slice(0, 60).trimEnd()}…` : message}`;
       // em segundo plano: a pessoa não espera pelo SMTP
-      void this.mail
-        .send(this.notifyTo, `[Radar] ${TYPE_PT[type]}: ${message.slice(0, 60)}`, html, {
-          text: lines.join('\n'),
-          headers: { 'Reply-To': user.email },
-        })
+      void Promise.all([render(email), render(email, { plainText: true })])
+        .then(([html, text]) => this.mail.send(this.notifyTo!, subject, html, { text, headers: { 'Reply-To': user.email } }))
         .catch((err: Error) => this.logger.warn(`Aviso de feedback não enviado: ${err.message}`));
     }
     return { id: saved.id, ok: true };

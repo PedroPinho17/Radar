@@ -45,7 +45,8 @@ export class ApplicationsService {
       this.apps.create({ userId, jobId, status: 'applied', events: [{ status: 'applied', note: note ?? null }] }),
     );
     // a IA também aprende com isto (histórico de decisões)
-    await this.matches.update({ userId, jobId }, { decision: 'applied', decidedAt: new Date() });
+    // (substitui um "gosto/não gosto" anterior; o motivo dessa decisão deixa de se aplicar)
+    await this.matches.update({ userId, jobId }, { decision: 'applied', decisionReason: null, decidedAt: new Date() });
     return app;
   }
 

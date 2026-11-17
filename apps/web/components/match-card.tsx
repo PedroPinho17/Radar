@@ -42,6 +42,7 @@ export function MatchCard({ match, onChange }: { match: Match; onChange: (m: Mat
   const [asking, setAsking] = useState<'like' | 'dislike' | null>(null);
   const [reason, setReason] = useState('');
   const [busy, setBusy] = useState(false);
+  const [changing, setChanging] = useState(false); // a mudar uma decisão já tomada
   const url = safeUrl(job.url);
 
   async function decide(decision: Decision, why?: string) {
@@ -49,7 +50,7 @@ export function MatchCard({ match, onChange }: { match: Match; onChange: (m: Mat
     try {
       if (decision === 'applied') {
         await api('/applications', { method: 'POST', json: { jobId: job.id } });
-        onChange({ ...match, decision: 'applied' });
+        onChange({ ...match, decision: 'applied', decisionReason: null });
         toast.success('Candidatura registada. Acompanha-a em Candidaturas.');
       } else {
         const saved = await api<Match>(`/jobs/matches/${match.id}/decision`, {
@@ -60,6 +61,7 @@ export function MatchCard({ match, onChange }: { match: Match; onChange: (m: Mat
       }
       setAsking(null);
       setReason('');
+      setChanging(false);
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -134,13 +136,17 @@ export function MatchCard({ match, onChange }: { match: Match; onChange: (m: Mat
           {match.missingSkills.map((s) => <Badge key={s} variant="destructive">Falta: {s}</Badge>)}
         </div>
 
-        {match.decision ? (
-          <p className="flex items-center gap-2 rounded-lg bg-muted/60 px-3 py-2 text-sm">
+        {match.decision && !changing ? (
+          <div className="flex items-center gap-2 rounded-lg bg-muted/60 px-3 py-2 text-sm">
             {match.decision === 'like' && <><ThumbsUpIcon className="size-4 text-green-600" /> Gostaste</>}
             {match.decision === 'dislike' && <><ThumbsDownIcon className="size-4 text-red-500" /> Não gostaste</>}
             {match.decision === 'applied' && <><CheckCircle2Icon className="size-4 text-primary" /> Candidataste-te</>}
             {match.decisionReason && <span className="text-muted-foreground">— {match.decisionReason}</span>}
-          </p>
+            {/* uma candidatura acompanha-se em Candidaturas; gosto/não gosto pode mudar-se aqui */}
+            {match.decision !== 'applied' && (
+              <Button size="sm" variant="ghost" className="ml-auto" onClick={() => setChanging(true)}>Mudar</Button>
+            )}
+          </div>
         ) : asking ? (
           <form className="flex flex-wrap gap-2" onSubmit={(e) => { e.preventDefault(); void decide(asking, reason); }}>
             <Input
@@ -159,6 +165,7 @@ export function MatchCard({ match, onChange }: { match: Match; onChange: (m: Mat
             <Button variant="outline" disabled={busy} onClick={() => setAsking('like')}><ThumbsUpIcon /> Gosto</Button>
             <Button variant="outline" disabled={busy} onClick={() => setAsking('dislike')}><ThumbsDownIcon /> Não gosto</Button>
             <Button disabled={busy} onClick={() => decide('applied')}><CheckCircle2Icon /> Candidatei-me</Button>
+            {changing && <Button variant="ghost" disabled={busy} onClick={() => setChanging(false)}>Cancelar</Button>}
           </div>
         )}
         <CoverLetter matchId={match.id} initial={match.coverLetter} />

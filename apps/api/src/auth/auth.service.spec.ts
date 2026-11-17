@@ -106,7 +106,7 @@ describe('AuthService · login', () => {
     expect(err).toBeInstanceOf(HttpException);
     expect((err as HttpException).getStatus()).toBe(429);
     service.onModuleDestroy();
-  });
+  }, 15_000); // 9 logins com scrypt (lento de propósito): os 5 s por omissão ficam à justa
 
   it('pede a password', async () => {
     const { service } = setup();

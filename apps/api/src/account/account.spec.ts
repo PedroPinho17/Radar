@@ -88,11 +88,15 @@ describe('FeedbackService', () => {
     await expect(service.create(user, { type: 'bug', message: 'O botão <b>não</b> funciona', page: '/perfil' }))
       .resolves.toEqual({ id: 'f1', ok: true });
     expect(feedback.create.mock.calls[0]![0]).toMatchObject({ userId: 'u1', page: '/perfil', matchId: null });
-    await flush();
+    await vi.waitFor(() => expect(mail.send).toHaveBeenCalled());
     const [to, subject, html, opts] = mail.send.mock.calls[0]!;
     expect(to).toBe('admin@radar.pt');
-    expect(subject).toContain('Erro no site');
+    expect(subject).toBe('[Radar] Erro no site: O botão <b>não</b> funciona');
     expect(html).toContain('&lt;b&gt;');
+    expect(html).not.toContain('<b>não</b>');
+    expect(html).toContain('Perfil'); // nome da página, não só o caminho
+    expect(html).toContain('/estado');
+    expect(opts.text).toContain('x@y.pt');
     expect(opts.headers['Reply-To']).toBe('x@y.pt');
   });
 
@@ -100,10 +104,26 @@ describe('FeedbackService', () => {
     const { service, matches, mail } = feedbackSetup('admin@radar.pt');
     const id = '6f9619ff-8b86-4d11-b42d-00c04fc964ff';
     await expect(service.create(user, { type: 'oferta', message: 'nota alta demais', matchId: id })).rejects.toBeInstanceOf(NotFoundException);
-    matches.findOne.mockResolvedValue({ id, score: 90, reasons: ['a'], job: { title: 'Dev', company: 'ACME' } });
+    matches.findOne.mockResolvedValue({
+      id, score: 90, reasons: ['razão um', 'razão dois'], missingSkills: ['Spring'],
+      job: { title: 'Dev', company: 'ACME', location: 'Porto', url: 'javascript:alert(1)' },
+    });
     await service.create(user, { type: 'oferta', message: 'nota alta demais', matchId: id });
-    await flush();
-    expect(mail.send.mock.calls[0]![3].text).toContain('Dev @ ACME (nota 90)');
+    await vi.waitFor(() => expect(mail.send).toHaveBeenCalled());
+    const [, subject, html, opts] = mail.send.mock.calls[0]!;
+    expect(subject).toBe('[Radar] Oferta mal avaliada · Dev (90)');
+    expect(opts.text).toContain('ACME · Porto');
+    expect(opts.text).toContain('razão um');
+    expect(opts.text).toContain('razão dois');
+    expect(opts.text).toContain('Falta: Spring');
+    expect(html).not.toContain('javascript:'); // link da oferta só se for http(s)
+  });
+
+  it('assunto curto: mensagens longas são cortadas com reticências', async () => {
+    const { service, mail } = feedbackSetup('admin@radar.pt');
+    await service.create(user, { type: 'sugestao', message: 'a'.repeat(100) });
+    await vi.waitFor(() => expect(mail.send).toHaveBeenCalled());
+    expect(mail.send.mock.calls[0]![1]).toBe(`[Radar] Sugestão: ${'a'.repeat(60)}…`);
   });
 
   it('valida; sem ALERT_EMAIL não envia; falha do SMTP não estraga', async () => {
