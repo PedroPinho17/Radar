@@ -34,15 +34,20 @@ export class SalaryService {
     return !!this.url;
   }
 
-  /** Salário bruto anual estimado (€, arredondado às centenas), ou null. */
-  async estimate(title: string, years: number, skills: string[]): Promise<number | null> {
+  /**
+   * Salário bruto anual estimado (€, arredondado às centenas), ou null.
+   * `location` é a localização da oferta tal como está guardada ("Lisboa", "Remoto (USA)", ...): o serviço
+   * Python escolhe o país a partir dela (vazio → Portugal; remoto sem país → média europeia).
+   */
+  async estimate(title: string, years: number, skills: string[], location?: string | null): Promise<number | null> {
     if (!this.url || Date.now() < this.downUntil) return null;
-    const key = `${title.trim().toLowerCase()}|${years}|${[...skills].sort().join(',').toLowerCase()}`;
+    const place = location?.trim() || null;
+    const key = `${title.trim().toLowerCase()}|${years}|${[...skills].sort().join(',').toLowerCase()}|${place?.toLowerCase() ?? ''}`;
     if (this.cache.has(key)) return this.cache.get(key)!;
     const pending = this.inflight.get(key);
     if (pending) return pending;
 
-    const request = this.withSlot(() => this.request(title, years, skills)).then((value) => {
+    const request = this.withSlot(() => this.request(title, years, skills, place)).then((value) => {
       if (value !== undefined) this.remember(key, value); // undefined = falha de rede: não guardar
       return value ?? null;
     });
@@ -55,13 +60,18 @@ export class SalaryService {
   }
 
   /** undefined = falhou (tentar mais tarde); null = o serviço respondeu mas sem valor plausível. */
-  private async request(title: string, years: number, skills: string[]): Promise<number | null | undefined> {
+  private async request(
+    title: string,
+    years: number,
+    skills: string[],
+    location: string | null,
+  ): Promise<number | null | undefined> {
     if (Date.now() < this.downUntil) return undefined;
     try {
       const res = await fetch(`${this.url}/estimate`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, years, skills }),
+        body: JSON.stringify({ title, years, skills, location }),
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);

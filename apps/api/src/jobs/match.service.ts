@@ -251,7 +251,7 @@ export class MatchService {
       visible.map(async (m) => {
         const noSalary = !m.job.salaryMin && !m.job.salaryMax;
         const estimatedSalary = noSalary
-          ? await this.salary.estimate(m.job.title, profile.yearsExperience, profile.skills)
+          ? await this.salary.estimate(m.job.title, profile.yearsExperience, profile.skills, m.job.location)
           : null;
         return Object.assign(m, { estimatedSalary });
       }),

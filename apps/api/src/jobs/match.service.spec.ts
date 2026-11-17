@@ -142,7 +142,10 @@ describe('MatchService · lista e decisões', () => {
 
   it('o email (list) nunca pede estimativas de salário; o site (listWithSalaries) sim', async () => {
     const { service, matches, salary } = setup();
-    const m = (salaryMin: number | null) => ({ minYears: null, job: { title: 'Dev', salaryMin, salaryMax: null } });
+    const m = (salaryMin: number | null) => ({
+      minYears: null,
+      job: { title: 'Dev', salaryMin, salaryMax: null, location: 'Remoto (USA)' },
+    });
     matches.find.mockResolvedValue([m(null), m(30000)]);
     salary.estimate.mockResolvedValue(28000);
 
@@ -152,7 +155,7 @@ describe('MatchService · lista e decisões', () => {
     const shown = await service.listWithSalaries('u1');
     expect(shown.map((x) => (x as { estimatedSalary?: number | null }).estimatedSalary)).toEqual([28000, null]);
     expect(salary.estimate).toHaveBeenCalledTimes(1); // só a que não diz o salário
-    expect(salary.estimate).toHaveBeenCalledWith('Dev', 2, ['Java']);
+    expect(salary.estimate).toHaveBeenCalledWith('Dev', 2, ['Java'], 'Remoto (USA)'); // envia a localização
   });
 
   it('sem estimativas: serviço desligado, área que não é IT ou sem perfil', async () => {

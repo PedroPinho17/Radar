@@ -186,10 +186,13 @@ uma pequena API em Python com um modelo treinado com salários de Informática e
 
   ```http
   POST /estimate
-  { "title": "Backend Developer", "years": 1, "skills": ["Python", "JavaScript", "SQL"] }
+  { "title": "Backend Developer", "years": 1, "skills": ["Python", "JavaScript", "SQL"], "location": "Lisboa" }
 
   200 { "salario_anual_eur": 24000 }
   ```
+
+  `location` é a localização da oferta ("Lisboa", "Remoto (USA)"…) ou `null`: o serviço escolhe o país a partir
+  dela (vazio → Portugal; remoto sem país → média europeia).
 
   Respostas fora do plausível (menos de 5 000 € ou mais de 500 000 €) são ignoradas. As estimativas ficam em
   cache, pedidos iguais juntam-se e há no máximo 4 pedidos em simultâneo.

@@ -46,6 +46,20 @@ describe('SalaryService', () => {
     expect(peak).toBeLessThanOrEqual(4);
   });
 
+  it('envia a localização e não mistura na cache ofertas iguais de países diferentes', async () => {
+    const fetch = vi.fn(async (_url: string, init?: RequestInit) => {
+      const { location } = JSON.parse(init!.body as string) as { location: string | null };
+      return answer(location === 'Remoto (USA)' ? 90_000 : 30_000);
+    });
+    vi.stubGlobal('fetch', fetch);
+    const s = new SalaryService(fakeConfig({ SALARY_API_URL: 'http://py:8000' }));
+    await expect(s.estimate('Dev', 2, [], 'Lisboa')).resolves.toBe(30_000);
+    await expect(s.estimate('Dev', 2, [], 'Remoto (USA)')).resolves.toBe(90_000);
+    await expect(s.estimate('Dev', 2, [], '  ')).resolves.toBe(30_000); // vazio → sem localização
+    expect(fetch).toHaveBeenCalledTimes(3);
+    expect(JSON.parse(fetch.mock.calls[2]![1]!.body as string)).toMatchObject({ location: null });
+  });
+
   it('ignora respostas implausíveis (e não volta a perguntar o mesmo)', async () => {
     const fetch = vi.fn().mockResolvedValueOnce(answer(1)).mockResolvedValueOnce(answer('muito'));
     vi.stubGlobal('fetch', fetch);

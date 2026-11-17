@@ -188,10 +188,13 @@ a small Python API with a model trained on IT salaries in Portugal.
 
   ```http
   POST /estimate
-  { "title": "Backend Developer", "years": 1, "skills": ["Python", "JavaScript", "SQL"] }
+  { "title": "Backend Developer", "years": 1, "skills": ["Python", "JavaScript", "SQL"], "location": "Lisboa" }
 
   200 { "salario_anual_eur": 24000 }
   ```
+
+  `location` is the offer's location ("Lisboa", "Remoto (USA)"…) or `null`: the service picks the country from it
+  (empty → Portugal; remote with no country → European average).
 
   Implausible answers (under €5,000 or over €500,000) are ignored. Estimates are cached, identical requests are
   merged and at most 4 requests run at once.
