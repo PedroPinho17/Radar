@@ -176,7 +176,8 @@ The AI scores offers by rotating between sources, so no single source drowns out
 
 Many offers don't state a salary. For those, Radar can show an estimate
 (**"≈ 24 000 €/ano (estimado)"**) requested from a **separate service from another project**: *salary-predictor*,
-a small Python API with a model trained on IT salaries in Portugal.
+a small Python API with a model trained on IT salaries in Europe and the US
+(Stack Overflow Developer Survey 2025).
 
 - **Locally** it runs in another terminal on port `8000`, and Radar connects to it via `SALARY_API_URL`:
   - `pnpm dev`: `SALARY_API_URL=http://127.0.0.1:8000` in `apps/api/.env`;
@@ -190,11 +191,12 @@ a small Python API with a model trained on IT salaries in Portugal.
   POST /estimate
   { "title": "Backend Developer", "years": 1, "skills": ["Python", "JavaScript", "SQL"], "location": "Lisboa" }
 
-  200 { "salario_anual_eur": 24000 }
+  200 { "salario_anual_eur": 24000, "base": "Portugal" }
   ```
 
   `location` is the offer's location ("Lisboa", "Remoto (USA)"…) or `null`: the service picks the country from it
-  (empty → Portugal; remote with no country → European average).
+  (empty → Portugal; remote with no country → European average) and reports which one it used in `base`. Radar
+  only reads `salario_anual_eur`.
 
   Implausible answers (under €5,000 or over €500,000) are ignored. Estimates are cached, identical requests are
   merged and at most 4 requests run at once.
