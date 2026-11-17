@@ -17,7 +17,7 @@ sites de emprego, a IA dá a cada uma uma nota (0–100) face ao perfil e às pr
 email nos dias e horas que a pessoa escolher.
 
 <p align="center">
-  <img src="docs/media/demo.gif" alt="Demo: entrar, ver ofertas com nota da IA, filtrar por fonte, marcar candidaturas e configurar o perfil" width="900">
+  <img src="docs/media/demo.gif" alt="Demo: entrar, ver ofertas com nota da IA, filtrar por fonte, mudar de ideias, reportar uma nota errada, marcar candidaturas e configurar o perfil" width="900">
 </p>
 <p align="center"><sub>Demo a 2× · <a href="docs/media/demo.mp4">vídeo em qualidade total</a> · conta de demonstração fictícia</sub></p>
 
@@ -40,6 +40,9 @@ email nos dias e horas que a pessoa escolher.
   "Porto" não apanha "Porto de Mós"), experiência e palavras a evitar.
 - **Nota da IA** com razões, requisitos em falta (carta, certificados, competências), horário e contrato;
   aprende com os "gosto / não gosto" e penaliza ofertas acima ou muito abaixo do nível da pessoa.
+- **Mudar de ideias**: um "gosto" ou "não gosto" pode mudar-se depois, por exemplo para "Candidatei-me".
+- **"A nota está errada?"**: cada oferta pode ser reportada num clique; quem gere o Radar recebe um email com a
+  mensagem, a oferta, a nota e as razões da IA.
 - **Salário estimado** nas ofertas de Informática que não dizem o salário (ver abaixo).
 - **Filtro por fonte** na lista de ofertas (Net-Empregos, ITJobs, Jooble…).
 - **Emails agendados**: dias da semana, até 6 horas por dia, nº de ofertas e nota mínima.
@@ -58,6 +61,8 @@ email nos dias e horas que a pessoa escolher.
 | ![Perfil: área profissional, funções, turnos e contrato](docs/media/profile.png) | ![Configuração dos emails: dias, horas, nº de ofertas e nota mínima](docs/media/emails.png) |
 | **Acompanhamento de candidaturas** | **Tema escuro** |
 | ![Candidaturas em curso com estado e notas](docs/media/applications.png) | ![Lista de ofertas em tema escuro](docs/media/offers-dark.png) |
+| **Mudar de ideias ("Não gostei" → "Candidatei-me")** | **Email de "A nota está errada?"** |
+| ![Oferta marcada como "não gosto" a ser mudada para candidatura](docs/media/change.png) | ![Email recebido por quem gere o Radar com a mensagem, a oferta e as razões da IA](docs/media/email.png) |
 
 <p align="center">
   <img src="docs/media/mobile.png" alt="Lista de ofertas no telemóvel" width="300">

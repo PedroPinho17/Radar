@@ -17,7 +17,7 @@ job sites, an AI gives each one a score (0–100) against the person's profile a
 emailed on the days and at the times the person chooses.
 
 <p align="center">
-  <img src="docs/media/demo.gif" alt="Demo: signing in, browsing AI-scored offers, filtering by source, tracking applications and setting up the profile" width="900">
+  <img src="docs/media/demo.gif" alt="Demo: signing in, browsing AI-scored offers, filtering by source, changing a decision, reporting a wrong score, tracking applications and setting up the profile" width="900">
 </p>
 <p align="center"><sub>Demo at 2× speed · <a href="docs/media/demo.mp4">full-quality video</a> · fictional demo account</sub></p>
 
@@ -42,6 +42,9 @@ emailed on the days and at the times the person chooses.
   "Porto" does not match "Porto de Mós"), experience and words to avoid.
 - **AI score** with reasons, missing requirements (licence, certificates, skills), schedule and contract;
   it learns from "like / dislike" and penalises offers above or well below the person's level.
+- **Change your mind**: a "like" or "dislike" can be changed later, for example to "I applied".
+- **"Is the score wrong?"**: any offer can be reported in one click; whoever runs Radar gets an email with the
+  message, the offer, the score and the AI's reasons.
 - **Estimated salary** on IT offers that don't state a salary (see below).
 - **Filter by source** in the offers list (Net-Empregos, ITJobs, Jooble…).
 - **Scheduled emails**: weekdays, up to 6 times a day, number of offers and minimum score.
@@ -60,6 +63,8 @@ emailed on the days and at the times the person chooses.
 | ![Profile: professional field, roles, shifts and contract](docs/media/profile.png) | ![Email settings: days, times, number of offers and minimum score](docs/media/emails.png) |
 | **Application tracking** | **Dark theme** |
 | ![Applications in progress with status and notes](docs/media/applications.png) | ![Offers list in dark theme](docs/media/offers-dark.png) |
+| **Changing your mind ("Disliked" → "I applied")** | **"Is the score wrong?" email** |
+| ![An offer marked as disliked being changed to an application](docs/media/change.png) | ![Email received by whoever runs Radar, with the message, the offer and the AI's reasons](docs/media/email.png) |
 
 <p align="center">
   <img src="docs/media/mobile.png" alt="Offers list on a phone" width="300">
