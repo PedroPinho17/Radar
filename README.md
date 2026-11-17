@@ -59,13 +59,13 @@ email nos dias e horas que a pessoa escolher.
 
 ```mermaid
 flowchart LR
-    U[Browser<br/>Next.js] -- /api/* --> A[API<br/>NestJS]
-    A --> P[(PostgreSQL)]
-    S1[Net-Empregos<br/>ITJobs · Jooble<br/>Landing.jobs · WWR] -- sync diário 08:00 --> A
-    A -- perfil + oferta --> G[Gemini / Groq]
-    G -- nota 0–100 + razões --> A
-    A -- estimativa salarial --> SP[salary-predictor<br/>opcional]
-    A -- resumo por email<br/>dias e horas de cada pessoa --> E[SMTP]
+    U["Browser<br/>Next.js"] -->|"/api"| A["API<br/>NestJS"]
+    A --> P[("PostgreSQL")]
+    S1["Net-Empregos, ITJobs,<br/>Jooble, Landing.jobs, WWR"] -->|"sync diário 08:00"| A
+    A -->|"perfil + oferta"| G["Gemini / Groq"]
+    G -->|"nota 0-100 + razões"| A
+    A -->|"estimativa salarial"| SP["salary-predictor<br/>(opcional)"]
+    A -->|"resumo por email"| E["SMTP"]
 ```
 
 **Recolha:** `sync diário → ofertas por área e distrito de cada pessoa → normalização (local, modelo de trabalho, salário) → PostgreSQL`
