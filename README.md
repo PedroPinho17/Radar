@@ -1,189 +1,191 @@
 <p align="center">
-  <img src="docs/media/logo.svg" alt="Logótipo do Radar" width="96">
+  <img src="docs/media/logo.svg" alt="Radar logo" width="96">
 </p>
 
 <h1 align="center">Radar</h1>
 
 <p align="center">
-  <b>O emprego certo vem ter contigo.</b><br>
-  Ofertas de vários sites, avaliadas pela IA face ao teu perfil, no teu email.
+  <b>The right job comes to you.</b><br>
+  Offers from many job sites, scored by AI against your profile, delivered to your inbox.
 </p>
 
-<p align="center"><b>Português</b> · <a href="README.en.md">English</a></p>
+<p align="center"><b>English</b> · <a href="README.pt-PT.md">Português</a></p>
 
-Assistente de procura de emprego para **qualquer profissão**, da auxiliar de limpeza ao diretor financeiro.
-A pessoa cria o perfil uma vez (com CV ou com um formulário simples, sem CV); o Radar junta ofertas de vários
-sites de emprego, a IA dá a cada uma uma nota (0–100) face ao perfil e às preferências, e envia as melhores por
-email nos dias e horas que a pessoa escolher.
+A job-search assistant for **any profession**, from cleaning staff to chief financial officer.
+Users set up their profile once (from a CV or a simple form, no CV needed). Radar gathers job offers from several
+job sites, an AI gives each one a score (0–100) against the person's profile and preferences, and the best ones are
+emailed on the days and at the times the person chooses.
 
 <p align="center">
-  <img src="docs/media/demo.gif" alt="Demo: entrar, ver ofertas com nota da IA, filtrar por fonte, mudar de ideias, reportar uma nota errada, marcar candidaturas e configurar o perfil" width="900">
+  <img src="docs/media/demo.gif" alt="Demo: signing in, browsing AI-scored offers, filtering by source, changing a decision, reporting a wrong score, tracking applications and setting up the profile" width="900">
 </p>
-<p align="center"><sub>Demo a 2× · <a href="docs/media/demo.mp4">vídeo em qualidade total</a> · conta de demonstração fictícia</sub></p>
+<p align="center"><sub>Demo at 2× speed · <a href="docs/media/demo.mp4">full-quality video</a> · fictional demo account</sub></p>
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-black?logo=next.js)
 ![NestJS](https://img.shields.io/badge/NestJS-12-E0234E?logo=nestjs)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?logo=postgresql&logoColor=white)
-![TypeORM](https://img.shields.io/badge/TypeORM-migrações-FE0803)
-![Gemini](https://img.shields.io/badge/IA-Gemini%20%2B%20Groq-8E75B2?logo=googlegemini&logoColor=white)
+![TypeORM](https://img.shields.io/badge/TypeORM-migrations-FE0803)
+![Gemini](https://img.shields.io/badge/AI-Gemini%20%2B%20Groq-8E75B2?logo=googlegemini&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
 ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)
 
-## Funcionalidades
+> The app's interface is in Portuguese: it targets the Portuguese job market.
 
-- **Perfil a partir do CV** (PDF, + LinkedIn opcional) **ou de um formulário sem CV**: experiência, escolaridade,
-  carta de condução, área, distrito/cidade, turnos e tipo de contrato.
-- **19 áreas profissionais**: do trabalho operacional (limpeza, restauração, indústria, logística, agricultura…)
-  aos cargos qualificados e de direção (finanças, engenharia, direito, gestão…), cada uma ligada às categorias
-  reais dos sites de emprego.
-- **Ofertas filtradas** por funções, localização (308 concelhos ↔ distritos: o distrito "Aveiro" apanha Ovar,
-  "Porto" não apanha "Porto de Mós"), experiência e palavras a evitar.
-- **Nota da IA** com razões, requisitos em falta (carta, certificados, competências), horário e contrato;
-  aprende com os "gosto / não gosto" e penaliza ofertas acima ou muito abaixo do nível da pessoa.
-- **Mudar de ideias**: um "gosto" ou "não gosto" pode mudar-se depois, por exemplo para "Candidatei-me".
-- **"A nota está errada?"**: cada oferta pode ser reportada num clique; quem gere o Radar recebe um email com a
-  mensagem, a oferta, a nota e as razões da IA.
-- **Salário estimado** nas ofertas de Informática que não dizem o salário (ver abaixo).
-- **Filtro por fonte** na lista de ofertas (Net-Empregos, ITJobs, Jooble…).
-- **Emails agendados**: dias da semana, até 6 horas por dia, nº de ofertas e nota mínima.
-- **Cartas de apresentação** (PT/EN) em linguagem simples e **acompanhamento de candidaturas** com lembretes de follow-up.
-- **Conta**: confirmação de email, recuperar/mudar password, terminar outras sessões.
-- **RGPD**: consentimento, exportar dados (JSON), apagar conta, limpeza automática, páginas de Termos e Privacidade.
-- **Operação**: `/api/health`, alertas por email, página `/estado` para admins, "Reportar um problema".
-- **Tema claro e escuro** e site adaptado a telemóvel.
+## Features
 
-## Capturas de ecrã
+- **Profile from a CV** (PDF, plus optional LinkedIn) **or from a form with no CV**: experience, education,
+  driving licence, field, district/city, shifts and contract type.
+- **19 professional fields**: from operational work (cleaning, hospitality, manufacturing, logistics, agriculture…)
+  to skilled and management roles (finance, engineering, law, management…), each mapped to the job sites'
+  real categories.
+- **Filtered offers** by role, location (308 municipalities ↔ districts: the "Aveiro" district matches Ovar,
+  "Porto" does not match "Porto de Mós"), experience and words to avoid.
+- **AI score** with reasons, missing requirements (licence, certificates, skills), schedule and contract;
+  it learns from "like / dislike" and penalises offers above or well below the person's level.
+- **Change your mind**: a "like" or "dislike" can be changed later, for example to "I applied".
+- **"Is the score wrong?"**: any offer can be reported in one click; whoever runs Radar gets an email with the
+  message, the offer, the score and the AI's reasons.
+- **Estimated salary** on IT offers that don't state a salary (see below).
+- **Filter by source** in the offers list (Net-Empregos, ITJobs, Jooble…).
+- **Scheduled emails**: weekdays, up to 6 times a day, number of offers and minimum score.
+- **Cover letters** (PT/EN) in plain language and **application tracking** with follow-up reminders.
+- **Account**: email confirmation, password recovery/change, sign out other sessions.
+- **GDPR**: consent, data export (JSON), account deletion, automatic clean-up, Terms and Privacy pages.
+- **Operations**: `/api/health`, email alerts, `/estado` status page for admins, "Report a problem".
+- **Light and dark themes** and a mobile-friendly layout.
 
-| Página de apresentação | Ofertas ordenadas pela nota da IA |
+## Screenshots
+
+| Landing page | Offers ranked by AI score |
 | --- | --- |
-| ![Página de apresentação do Radar](docs/media/welcome.png) | ![Lista de ofertas com nota, razões e requisitos em falta](docs/media/offers.png) |
-| **O que a pessoa procura** | **Emails agendados** |
-| ![Perfil: área profissional, funções, turnos e contrato](docs/media/profile.png) | ![Configuração dos emails: dias, horas, nº de ofertas e nota mínima](docs/media/emails.png) |
-| **Acompanhamento de candidaturas** | **Tema escuro** |
-| ![Candidaturas em curso com estado e notas](docs/media/applications.png) | ![Lista de ofertas em tema escuro](docs/media/offers-dark.png) |
-| **Mudar de ideias ("Não gostei" → "Candidatei-me")** | **Email de "A nota está errada?"** |
-| ![Oferta marcada como "não gosto" a ser mudada para candidatura](docs/media/change.png) | ![Email recebido por quem gere o Radar com a mensagem, a oferta e as razões da IA](docs/media/email.png) |
+| ![Radar landing page](docs/media/welcome.png) | ![Offers list with score, reasons and missing requirements](docs/media/offers.png) |
+| **What the person is looking for** | **Scheduled emails** |
+| ![Profile: professional field, roles, shifts and contract](docs/media/profile.png) | ![Email settings: days, times, number of offers and minimum score](docs/media/emails.png) |
+| **Application tracking** | **Dark theme** |
+| ![Applications in progress with status and notes](docs/media/applications.png) | ![Offers list in dark theme](docs/media/offers-dark.png) |
+| **Changing your mind ("Disliked" → "I applied")** | **"Is the score wrong?" email** |
+| ![An offer marked as disliked being changed to an application](docs/media/change.png) | ![Email received by whoever runs Radar, with the message, the offer and the AI's reasons](docs/media/email.png) |
 
 <p align="center">
-  <img src="docs/media/mobile.png" alt="Lista de ofertas no telemóvel" width="300">
-  <br><sub>No telemóvel</sub>
+  <img src="docs/media/mobile.png" alt="Offers list on a phone" width="300">
+  <br><sub>On a phone</sub>
 </p>
 
-## Arquitetura
+## Architecture
 
 ```mermaid
 flowchart LR
     U["Browser<br/>Next.js"] -->|"/api"| A["API<br/>NestJS"]
     A --> P[("PostgreSQL")]
-    S1["Net-Empregos, ITJobs,<br/>Jooble, Landing.jobs, WWR"] -->|"sync diário 08:00"| A
-    A -->|"perfil + oferta"| G["Gemini / Groq"]
-    G -->|"nota 0-100 + razões"| A
-    A -->|"estimativa salarial"| SP["salary-predictor<br/>(opcional)"]
-    A -->|"resumo por email"| E["SMTP"]
+    S1["Net-Empregos, ITJobs,<br/>Jooble, Landing.jobs, WWR"] -->|"daily sync 08:00"| A
+    A -->|"profile + offer"| G["Gemini / Groq"]
+    G -->|"score 0-100 + reasons"| A
+    A -->|"salary estimate"| SP["salary-predictor<br/>(optional)"]
+    A -->|"email digest"| E["SMTP"]
 ```
 
-**Recolha:** `sync diário → ofertas por área e distrito de cada pessoa → normalização (local, modelo de trabalho, salário) → PostgreSQL`
+**Collection:** `daily sync → offers per field and district of each person → normalisation (location, work model, salary) → PostgreSQL`
 
-**Avaliação:** `aos :15 e :45 → filtros (funções, local, experiência, palavras a evitar) → IA dá nota + razões + requisitos em falta → matches`
+**Scoring:** `at :15 and :45 → filters (roles, location, experience, words to avoid) → AI gives score + reasons + missing requirements → matches`
 
-**Emails:** `de 30 em 30 min → quem tem email agendado para esta hora → ofertas novas acima da nota mínima → email`
+**Emails:** `every 30 min → who has an email scheduled for now → new offers above the minimum score → email`
 
-### Decisões de design
+### Design decisions
 
-| Decisão | Porquê |
+| Decision | Why |
 | --- | --- |
-| Filtros determinísticos antes da IA | A IA é a parte cara e lenta. Localização, experiência e palavras a evitar eliminam a maioria das ofertas sem gastar quota. |
-| Concelhos ↔ distritos (308) | Os sites escrevem a localização de formas diferentes. Um mapa explícito evita falsos positivos como "Porto" ↔ "Porto de Mós". |
-| Gemini com fallback para Groq | Se uma quota acaba ou um modelo falha, a avaliação continua noutro fornecedor. |
-| Avaliação alternada entre fontes | Uma fonte com muitas ofertas não "abafa" as outras na fila da IA. |
-| Locks no Postgres para tarefas agendadas | Várias instâncias da API podem correr ao mesmo tempo sem duplicar avaliações nem emails. |
-| Migrações em vez de `synchronize` | O esquema só muda por migrações versionadas, aplicadas automaticamente ao arrancar. |
-| Sessões em cookie httpOnly | O token nunca fica acessível a JavaScript e na BD só fica o hash. |
+| Deterministic filters before the AI | The AI is the expensive, slow part. Location, experience and excluded words remove most offers without using quota. |
+| Municipalities ↔ districts (308) | Job sites write locations in different ways. An explicit map avoids false positives like "Porto" ↔ "Porto de Mós". |
+| Gemini with Groq fallback | If a quota runs out or a model fails, scoring carries on with another provider. |
+| Scoring rotates between sources | A source with many offers doesn't drown out the others in the AI queue. |
+| Postgres locks for scheduled jobs | Several API instances can run at once without duplicate scoring or duplicate emails. |
+| Migrations instead of `synchronize` | The schema only changes through versioned migrations, applied automatically on startup. |
+| Sessions in an httpOnly cookie | The token is never reachable from JavaScript and only its hash is stored in the DB. |
 
-## Tecnologias
+## Tech stack
 
-| Camada | Tecnologia |
+| Layer | Technology |
 | --- | --- |
 | Frontend | Next.js 16 (App Router), React 19, Tailwind CSS 4, shadcn/ui |
 | API | NestJS 12, TypeORM, Zod, @nestjs/schedule |
-| IA | Google Gemini (`@google/genai`), Groq (fallback) |
-| Dados | PostgreSQL 16 |
-| Emails | Nodemailer + templates React |
-| Ferramentas | Turborepo, pnpm workspaces, Docker Compose, Vitest, Playwright, ESLint, oxlint |
+| AI | Google Gemini (`@google/genai`), Groq (fallback) |
+| Data | PostgreSQL 16 |
+| Emails | Nodemailer + React templates |
+| Tooling | Turborepo, pnpm workspaces, Docker Compose, Vitest, Playwright, ESLint, oxlint |
 
-## Estrutura
+## Project structure
 
 ```
 apps/
-  api/   NestJS + TypeORM (Postgres) — auth, perfil, ofertas, IA (Gemini/Groq), emails, tarefas agendadas
-  web/   Next.js (App Router) + Tailwind + shadcn/ui — o site
+  api/   NestJS + TypeORM (Postgres) — auth, profile, offers, AI (Gemini/Groq), emails, scheduled jobs
+  web/   Next.js (App Router) + Tailwind + shadcn/ui — the website
 packages/
-  eslint-config/       configuração partilhada do ESLint
-  typescript-config/   tsconfig partilhados
-docs/media/            capturas de ecrã e demo
+  eslint-config/       shared ESLint config
+  typescript-config/   shared tsconfigs
+docs/media/            screenshots and demo
 ```
 
-## Começar
+## Getting started
 
-### Requisitos
+### Prerequisites
 
 - Node.js 24+
 - pnpm 11
 - Docker Desktop
-- Uma [chave da API do Google Gemini](https://aistudio.google.com/apikey) (e opcionalmente Groq)
+- A [Google Gemini API key](https://aistudio.google.com/apikey) (and optionally Groq)
 
-### Instalação
+### Setup
 
 ```bash
 git clone https://github.com/PedroPinho17/Radar.git
 cd Radar
 pnpm install
-cp apps/api/.env.example apps/api/.env   # preencher as chaves (Gemini, Groq, SMTP…)
-docker compose up -d                     # liga o Postgres (porta 5434)
-pnpm dev                                 # API em :3001 + site em :3000
+cp apps/api/.env.example apps/api/.env   # fill in the keys (Gemini, Groq, SMTP…)
+docker compose up -d                     # starts Postgres (port 5434)
+pnpm dev                                 # API on :3001 + website on :3000
 ```
 
-Abrir <http://localhost:3000>. Para correr tudo em Docker: `docker compose --profile app up -d --build`.
+Open <http://localhost:3000>. To run everything in Docker: `docker compose --profile app up -d --build`.
 
-> Mais comandos (Docker, migrações, testes, backups, monitorização): **[COMO-CORRER.TXT](COMO-CORRER.TXT)**.
+> More commands (Docker, migrations, tests, backups, monitoring), in Portuguese: **[COMO-CORRER.TXT](COMO-CORRER.TXT)**.
 
-## Base de dados
+## Database
 
-PostgreSQL 16 (via `docker-compose.yml`), acedido pela API com TypeORM.
+PostgreSQL 16 (via `docker-compose.yml`), accessed by the API through TypeORM.
 
-- **Migrações** em [`apps/api/src/migrations`](apps/api/src/migrations): a API aplica as pendentes ao arrancar,
-  por isso uma base de dados vazia fica pronta sozinha.
-- **Esquema completo** (só estrutura, sem dados) em [`apps/api/db/schema.sql`](apps/api/db/schema.sql), para consulta.
-- Tabelas: `users`, `sessions`, `email_verifications`, `password_resets`, `profiles`, `preferences`, `jobs`,
+- **Migrations** in [`apps/api/src/migrations`](apps/api/src/migrations): the API applies pending ones on startup,
+  so an empty database sets itself up.
+- **Full schema** (structure only, no data) in [`apps/api/db/schema.sql`](apps/api/db/schema.sql), for reference.
+- Tables: `users`, `sessions`, `email_verifications`, `password_resets`, `profiles`, `preferences`, `jobs`,
   `matches`, `applications`, `application_events`, `feedback`, `migrations`.
-- Comandos: `pnpm --filter api db:show | db:migrate | db:revert | db:generate src/migrations/Nome`.
-- Backups (`pg_dump`) ficam em `base-de-dados/`, que está fora do git por conterem dados pessoais.
-  Ver [COMO-CORRER.TXT](COMO-CORRER.TXT), secção 9.
+- Commands: `pnpm --filter api db:show | db:migrate | db:revert | db:generate src/migrations/Name`.
+- Backups (`pg_dump`) go in `base-de-dados/`, which is kept out of git because they contain personal data.
+  See [COMO-CORRER.TXT](COMO-CORRER.TXT), section 9.
 
-## Fontes de ofertas
+## Job sources
 
-| Fonte | Para quem | Notas |
+| Source | For | Notes |
 |---|---|---|
-| ITJobs, Landing.jobs, We Work Remotely | Informática | APIs/RSS públicos (ITJobs pede chave) |
-| Net-Empregos | todas as áreas | categorias das áreas de cada pessoa **no distrito dela**; pode bloquear pedidos automáticos |
-| Jooble | todas as áreas | opcional (`JOOBLE_API_KEY`); pesquisa na zona de cada pessoa |
+| ITJobs, Landing.jobs, We Work Remotely | IT | public APIs/RSS (ITJobs needs a key) |
+| Net-Empregos | all fields | each person's field categories **in their district**; may block automated requests |
+| Jooble | all fields | optional (`JOOBLE_API_KEY`); searches each person's area |
 
-A IA avalia as ofertas alternando entre fontes, para nenhuma fonte "abafar" as outras.
+The AI scores offers by rotating between sources, so no single source drowns out the others.
 
-## Salário estimado (serviço externo, opcional)
+## Estimated salary (external service, optional)
 
-Muitas ofertas não dizem o salário. Para essas, o Radar pode mostrar uma estimativa
-(**"≈ 24 000 €/ano (estimado)"**) pedida a um **serviço à parte, de outro projeto**: o *salary-predictor*,
-uma pequena API em Python com um modelo treinado com salários de Informática na Europa e nos EUA
+Many offers don't state a salary. For those, Radar can show an estimate
+(**"≈ 24 000 €/ano (estimado)"**) requested from a **separate service from another project**: *salary-predictor*,
+a small Python API with a model trained on IT salaries in Europe and the US
 (Stack Overflow Developer Survey 2025).
 
-- **Localmente** corre noutro terminal, na porta `8000`, e o Radar liga-se a ele por `SALARY_API_URL`:
-  - `pnpm dev`: `SALARY_API_URL=http://127.0.0.1:8000` em `apps/api/.env`;
-  - Docker: `SALARY_API_URL=http://host.docker.internal:8000` (já no `docker-compose.yml`).
-- **É opcional**: sem `SALARY_API_URL`, ou com o serviço desligado, o Radar funciona igual, só não mostra estimativas.
-  Se o serviço falhar, o Radar não insiste durante 1 minuto.
-- **Só para Informática** (é o que o modelo conhece) e **só no site**: os emails não pedem estimativas.
-- Contrato esperado pelo Radar:
+- **Locally** it runs in another terminal on port `8000`, and Radar connects to it via `SALARY_API_URL`:
+  - `pnpm dev`: `SALARY_API_URL=http://127.0.0.1:8000` in `apps/api/.env`;
+  - Docker: `SALARY_API_URL=http://host.docker.internal:8000` (already in `docker-compose.yml`).
+- **It's optional**: without `SALARY_API_URL`, or with the service down, Radar works the same, just without estimates.
+  If the service fails, Radar stops calling it for 1 minute.
+- **IT only** (that's what the model knows) and **website only**: emails don't request estimates.
+- Contract expected by Radar:
 
   ```http
   POST /estimate
@@ -192,25 +194,25 @@ uma pequena API em Python com um modelo treinado com salários de Informática n
   200 { "salario_anual_eur": 24000, "base": "Portugal" }
   ```
 
-  `location` é a localização da oferta ("Lisboa", "Remoto (USA)"…) ou `null`: o serviço escolhe o país a partir
-  dela (vazio → Portugal; remoto sem país → média europeia) e diz qual usou em `base`. O Radar só lê
-  `salario_anual_eur`.
+  `location` is the offer's location ("Lisboa", "Remoto (USA)"…) or `null`: the service picks the country from it
+  (empty → Portugal; remote with no country → European average) and reports which one it used in `base`. Radar
+  only reads `salario_anual_eur`.
 
-  Respostas fora do plausível (menos de 5 000 € ou mais de 500 000 €) são ignoradas. As estimativas ficam em
-  cache, pedidos iguais juntam-se e há no máximo 4 pedidos em simultâneo.
+  Implausible answers (under €5,000 or over €500,000) are ignored. Estimates are cached, identical requests are
+  merged and at most 4 requests run at once.
 
-## Qualidade
+## Quality
 
-- `pnpm test` — testes unitários (API e site). Cobertura mínima obrigatória: 80% linhas/instruções/funções, 70% ramos.
-- `pnpm test:e2e` — testes de ponta a ponta no Chrome (registo → perfil → preferências → apagar conta), em base de dados à parte.
-- `pnpm lint` — ESLint (site) e oxlint (API).
+- `pnpm test` — unit tests (API and website). Required minimum coverage: 80% lines/statements/functions, 70% branches.
+- `pnpm test:e2e` — end-to-end tests in Chrome (sign-up → profile → preferences → delete account), on a separate database.
+- `pnpm lint` — ESLint (website) and oxlint (API).
 
-## Segurança
+## Security
 
-Passwords com scrypt; sessões em cookie httpOnly (só o hash na BD); rate limits e bloqueio após falhas de login;
-verificação de `Origin`; cabeçalhos de segurança (CSP, HSTS em produção…); tokens de email no fragmento do URL
-(nunca enviados a servidores) e de uso único; locks no Postgres para tarefas agendadas com várias instâncias.
+Passwords hashed with scrypt; sessions in an httpOnly cookie (only the hash is stored in the DB); rate limits and
+lockout after failed logins; `Origin` checking; security headers (CSP, HSTS in production…); email tokens in the URL
+fragment (never sent to servers) and single-use; Postgres locks for scheduled jobs across multiple instances.
 
-## Autor
+## Author
 
-Feito por **Pedro Pinho** · [GitHub](https://github.com/PedroPinho17)
+Made by **Pedro Pinho** · [GitHub](https://github.com/PedroPinho17)
