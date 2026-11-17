@@ -132,8 +132,8 @@ docs/media/            screenshots and demo
 ### Setup
 
 ```bash
-git clone https://github.com/PedroPinho17/radar.git
-cd radar
+git clone https://github.com/PedroPinho17/Radar.git
+cd Radar
 pnpm install
 cp apps/api/.env.example apps/api/.env   # fill in the keys (Gemini, Groq, SMTP…)
 docker compose up -d                     # starts Postgres (port 5434)
